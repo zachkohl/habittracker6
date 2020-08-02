@@ -5,6 +5,13 @@ import read from "../lib/browser/read";
 import Role from "../components/role";
 import Wrapper from "../components/DnDwrapper";
 import Main from "../components/main";
+import { resetServerContext } from "react-beautiful-dnd";
 export default function MainPage(props) {
   return <Main />;
+}
+export async function getStaticProps(context) {
+  resetServerContext();
+  return {
+    props: {},
+  };
 }

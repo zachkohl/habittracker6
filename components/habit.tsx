@@ -18,11 +18,18 @@ export default function Habit(props) {
 
   async function deleteHandler() {
     const x = await write("DELETE FROM habits WHERE id=?", [props.id]);
-    props.reRender();
+    props.dispatch({
+      type: "delete_habit",
+      payload: { habitIndex: props.index, roleIndex: props.roleIndex },
+    });
   }
 
   return (
-    <Draggable draggableId={`habitId${props.id}`} index={props.id}>
+    <Draggable
+      draggableId={`habitId${props.id}`}
+      index={props.index}
+      roleIndex={props.roleIndex}
+    >
       {(provided, snapshot) => (
         <div
           ref={provided.innerRef}
