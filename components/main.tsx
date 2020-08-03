@@ -50,19 +50,22 @@ export default function MainPage(props) {
 
       case "delete_habit":
         const deleteHabit = { ...state };
-
-        deleteHabit.roles[action.payload.roleIndex].habits.splice(
+        const roleIndex = action.payload.roleIndex;
+        console.log(roleIndex);
+        deleteHabit.roles[roleIndex].habits.splice(
           action.payload.habitIndex,
           1
         );
 
         return deleteHabit;
 
-      case "add_habit":
-        const habitState = { ...state };
-        habitState.roles[action.payload.index].habits = action.payload.habit;
+      case "add_habits":
+        const habitsState = { ...state };
 
-        return habitState;
+        const Rindex = action.payload.index;
+        habitsState.roles[Rindex].habits = action.payload.habits;
+
+        return habitsState;
 
       case "add_roles":
         return { ...state, roles: action.payload };

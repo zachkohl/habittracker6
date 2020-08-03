@@ -10,19 +10,19 @@ export function write(sql, params) {
       }
     });
     console.log(params);
-    db.run(sql, params, (err, rows) => {
+    db.run(sql, params, function (err, rows) {
+      console.log();
+      console.log(rows);
+      console.log(err);
       if (err) {
         console.log(err);
         //   throw err;
         reject(err);
-      }
-      if (rows) {
-        resolve(rows);
       } else {
-        resolve(null);
+        resolve(this.lastID);
       }
     });
-
+    console.log(db.lastId);
     // close the database connection
     db.close();
   });

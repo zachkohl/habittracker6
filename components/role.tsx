@@ -30,8 +30,8 @@ export default function Role(props) {
   async function renderHabits() {
     const x = await read("SELECT * from habits where roleId=?", [props.id]);
     props.dispatch({
-      type: "add_habit",
-      payload: { habit: x, index: props.index },
+      type: "add_habits",
+      payload: { habits: x, index: props.index },
     });
 
     setHabits(x);
@@ -61,8 +61,12 @@ export default function Role(props) {
     props.reRender();
   }
 
-  function createHabit() {
-    write("INSERT INTO habits(name,roleId) VALUES(?,?)", [habit, props.id]);
+  async function createHabit() {
+    const habitObject = await write(
+      "INSERT INTO habits(name,roleId) VALUES(?,?)",
+      [habit, props.id]
+    );
+    console.log(habitObject);
     renderHabits();
   }
 

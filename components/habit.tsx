@@ -25,11 +25,7 @@ export default function Habit(props) {
   }
 
   return (
-    <Draggable
-      draggableId={`habitId${props.id}`}
-      index={props.index}
-      roleIndex={props.roleIndex}
-    >
+    <Draggable draggableId={`habitId${props.id}`} index={props.index}>
       {(provided, snapshot) => (
         <div
           ref={provided.innerRef}
