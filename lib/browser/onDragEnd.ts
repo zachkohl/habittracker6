@@ -1,12 +1,15 @@
 import sortArray from "./sortArray";
 
-export default function (e, state, dispatch) {
+export default function selectDropAction(e, state, dispatch) {
+  console.log("inside drag end");
   switch (e.type) {
     case "ROLE":
       endDragRole(e, state, dispatch);
       return null;
     case "HABIT":
       endDragHabit(e, state, dispatch);
+
+      return null;
     default:
       console.log("UNKNOWN TYPE", e.type);
   }

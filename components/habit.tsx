@@ -26,27 +26,29 @@ export default function Habit(props) {
 
   return (
     <Draggable draggableId={`habitId${props.id}`} index={props.index}>
-      {(provided, snapshot) => (
-        <div
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-        >
-          <div style={{ backgroundColor: "green", margin: "10px" }}>
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              onBlur={save}
-            />
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              onBlur={save}
-            />
-            <button onClick={deleteHandler}>delete</button>
+      {function habitInner(provided, snapshot) {
+        return (
+          <div
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+          >
+            <div style={{ backgroundColor: "green", margin: "10px" }}>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onBlur={save}
+              />
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                onBlur={save}
+              />
+              <button onClick={deleteHandler}>delete</button>
+            </div>
           </div>
-        </div>
-      )}
+        );
+      }}
     </Draggable>
   );
 }

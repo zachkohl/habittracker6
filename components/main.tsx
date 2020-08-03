@@ -9,89 +9,123 @@ import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import onDragEnd from "../lib/browser/onDragEnd";
 import SortArray from "../lib/browser/sortArray";
 import _ from "lodash";
-export default function MainPage(props) {
-  const [data, setData] = useState("");
-  // const [roles, setRoles] = useState([]);
 
-  const initialState = { roles: [] };
+const initialState = { roles: [] };
 
-  function reducer(state, action) {
-    switch (action.type) {
-      case "move_habit":
-        const moveState = { ...state };
-        console.log(action.payload);
-        const roleId = action.payload.destination.droppableId.slice(6);
-        console.log(roleId);
-        if (action.payload.destination.dropabbleId === null) {
-          return moveState;
-        } else if (
-          action.payload.destination.dropabbleId ===
-          action.payload.source.dropabbleId
-        ) {
-          const habitArray = Array.from(moveState.roles[roleId].habits);
-          const [removedHabit] = habitArray.splice(
-            action.payload.source.index,
-            1
-          );
-          console.log(action.payload);
-          habitArray.splice(action.payload.destination.index, 0, removedHabit);
-          moveState.roles[roleId].habits = habitArray;
-          //   const params = newArray.map((role: any, i) => {
-          //     return {
-          //       sql: `UPDATE ROLES SET reactOrder=? where id=?`,
-          //       params: [i, role.id],
-          //     };
-          //   });
-          //   parallel(params);
-          // }
-          return state;
-        }
-        return state;
-
-      case "delete_habit":
-        const deleteHabit = { ...state };
-        const roleIndex = action.payload.roleIndex;
-        console.log(roleIndex);
-        deleteHabit.roles[roleIndex].habits.splice(
-          action.payload.habitIndex,
+function reducer(state, action) {
+  switch (action.type) {
+    case "move_habit":
+      console.log("this should run once");
+      const moveState = { ...state };
+      const sourceId = action.payload.source.droppableId.slice(6);
+      if (action.payload.destination === null) {
+        console.log("no destination");
+        return moveState;
+      } else if (
+        action.payload.destination.droppableId ===
+        action.payload.source.droppableId
+      ) {
+        console.log("reorder inside of role");
+        const habitArray = Array.from(moveState.roles[sourceId].habits);
+        const [removedHabit] = habitArray.splice(
+          action.payload.source.index,
           1
         );
-
-        return deleteHabit;
-
-      case "add_habits":
-        const habitsState = { ...state };
-
-        const Rindex = action.payload.index;
-        habitsState.roles[Rindex].habits = action.payload.habits;
-
-        return habitsState;
-
-      case "add_roles":
-        return { ...state, roles: action.payload };
-      case "reorder_roles":
-        console.log(state);
-        let newState = _.cloneDeep(state);
-
-        const newArray = Array.from(newState.roles);
-        const [removed] = newArray.splice(action.payload.sourceIndex, 1);
-        console.log(removed);
-
-        newArray.splice(action.payload.destIndex, 0, removed);
-        console.log(newArray);
-        newState.roles = newArray;
-        const params = newArray.map((role: any, i) => {
+        console.log(removedHabit);
+        habitArray.splice(action.payload.destination.index, 0, removedHabit);
+        moveState.roles[sourceId].habits = habitArray;
+        console.log("new habit Array", habitArray);
+        const params = habitArray.map((habit: any, i) => {
           return {
-            sql: `UPDATE ROLES SET reactOrder=? where id=?`,
-            params: [i, role.id],
+            sql: `UPDATE HABITS SET reactOrder=? where id=?`,
+            params: [i, habit.id],
           };
         });
         parallel(params);
-        return newState;
-      default:
-        throw new Error("Do not have a case for that action in the reducer");
-    }
+
+        return moveState;
+      } else {
+        console.log("started move from role to role");
+        const originId = action.payload.source.droppableId.slice(6);
+        const destinationId = action.payload.destination.droppableId.slice(6);
+        const oldArray = Array.from(moveState.roles[originId].habits);
+        const newArray = Array.from(moveState.roles[destinationId].habits);
+        const [removedOldHabit] = oldArray.splice(
+          action.payload.source.index,
+          1
+        );
+        newArray.splice(action.payload.destination.index, 0, removedOldHabit);
+        moveState.roles[originId].habits = oldArray;
+        moveState.roles[destinationId].habits = newArray;
+
+        //get role ids
+        const slqRoleIdOrigin = moveState.roles[destinationId].id;
+        const slqRoleIdDestination = moveState.roles[originId].id;
+
+        const OldArrayParams = oldArray.map((habit: any, i) => {
+          return {
+            sql: `UPDATE HABITS SET reactOrder=?, roleId=? where id=?`,
+            params: [i, slqRoleIdOrigin, habit.id],
+          };
+        });
+        const newArrayParams = newArray.map((habit: any, i) => {
+          return {
+            sql: `UPDATE HABITS SET reactOrder=?, roleId=? where id=?`,
+            params: [i, slqRoleIdDestination, habit.id],
+          };
+        });
+        console.log(newArrayParams);
+        const params = OldArrayParams.concat(newArrayParams);
+        console.log(params);
+        parallel(params);
+
+        return moveState;
+      }
+
+    case "delete_habit":
+      const deleteHabit = { ...state };
+      const roleIndex = action.payload.roleIndex;
+      deleteHabit.roles[roleIndex].habits.splice(action.payload.habitIndex, 1);
+
+      return deleteHabit;
+
+    case "add_habits":
+      const habitsState = { ...state };
+
+      const Rindex = action.payload.index;
+      habitsState.roles[Rindex].habits = action.payload.habits;
+
+      return habitsState;
+
+    case "add_roles":
+      return { ...state, roles: action.payload };
+    case "reorder_roles":
+      console.log(state);
+      let newState = _.cloneDeep(state);
+
+      const newArray = Array.from(newState.roles);
+      const [removed] = newArray.splice(action.payload.sourceIndex, 1);
+      console.log(removed);
+
+      newArray.splice(action.payload.destIndex, 0, removed);
+      console.log(newArray);
+      newState.roles = newArray;
+      const params = newArray.map((role: any, i) => {
+        return {
+          sql: `UPDATE ROLES SET reactOrder=? where id=?`,
+          params: [i, role.id],
+        };
+      });
+      parallel(params);
+      return newState;
+    default:
+      throw new Error("Do not have a case for that action in the reducer");
   }
+}
+
+export default function MainPage(props) {
+  const [data, setData] = useState("");
+  // const [roles, setRoles] = useState([]);
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -157,18 +191,20 @@ export default function MainPage(props) {
       >
         <div>
           <Droppable droppableId={`roleArea`} type="ROLE">
-            {(provided, snapshot) => (
-              <div
-                ref={provided.innerRef}
-                style={{
-                  backgroundColor: snapshot.isDraggingOver ? "blue" : "red",
-                }}
-                {...provided.droppableProps}
-              >
-                {rolesList}
-                {provided.placeholder}
-              </div>
-            )}
+            {function mainInner(provided, snapshot) {
+              return (
+                <div
+                  ref={provided.innerRef}
+                  style={{
+                    backgroundColor: snapshot.isDraggingOver ? "blue" : "red",
+                  }}
+                  {...provided.droppableProps}
+                >
+                  {rolesList}
+                  {provided.placeholder}
+                </div>
+              );
+            }}
           </Droppable>
         </div>
       </DragDropContext>

@@ -93,18 +93,22 @@ export default function Role(props) {
             <input value={habit} onChange={(e) => setHabit(e.target.value)} />
             <button onClick={createHabit}>Add Habit</button>
             <Droppable droppableId={`roleId${props.index}`} type="HABIT">
-              {(provided, snapshot) => (
-                <div
-                  ref={provided.innerRef}
-                  style={{
-                    backgroundColor: snapshot.isDraggingOver ? "blue" : "green",
-                  }}
-                  {...provided.droppableProps}
-                >
-                  {habitList()}
-                  {provided.placeholder}
-                </div>
-              )}
+              {function roleInner(provided, snapshot) {
+                return (
+                  <div
+                    ref={provided.innerRef}
+                    style={{
+                      backgroundColor: snapshot.isDraggingOver
+                        ? "blue"
+                        : "green",
+                    }}
+                    {...provided.droppableProps}
+                  >
+                    {habitList()}
+                    {provided.placeholder}
+                  </div>
+                );
+              }}
             </Droppable>
             ;
           </div>
