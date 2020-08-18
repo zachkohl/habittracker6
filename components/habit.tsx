@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import read from "../lib/browser/read";
 import write from "../lib/browser/write";
 import { Draggable } from "react-beautiful-dnd";
-
+import Review from "./Review";
+import SampleCalendar from "./SampleCalendar";
 export default function Habit(props) {
   const [name, setName] = useState(props.name);
   const [description, setDescription] = useState(props.description || "");
@@ -44,6 +45,7 @@ export default function Habit(props) {
                 onChange={(e) => setDescription(e.target.value)}
                 onBlur={save}
               />
+              <SampleCalendar habitId={props.id} />
               <button onClick={deleteHandler}>delete</button>
             </div>
           </div>

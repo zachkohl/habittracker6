@@ -15,26 +15,23 @@ const initialState = { roles: [] };
 function reducer(state, action) {
   switch (action.type) {
     case "move_habit":
-      console.log("this should run once");
       const moveState = { ...state };
       const sourceId = action.payload.source.droppableId.slice(6);
       if (action.payload.destination === null) {
-        console.log("no destination");
         return moveState;
       } else if (
         action.payload.destination.droppableId ===
         action.payload.source.droppableId
       ) {
-        console.log("reorder inside of role");
         const habitArray = Array.from(moveState.roles[sourceId].habits);
         const [removedHabit] = habitArray.splice(
           action.payload.source.index,
           1
         );
-        console.log(removedHabit);
+
         habitArray.splice(action.payload.destination.index, 0, removedHabit);
         moveState.roles[sourceId].habits = habitArray;
-        console.log("new habit Array", habitArray);
+
         const params = habitArray.map((habit: any, i) => {
           return {
             sql: `UPDATE HABITS SET reactOrder=? where id=?`,
@@ -45,7 +42,6 @@ function reducer(state, action) {
 
         return moveState;
       } else {
-        console.log("started move from role to role");
         const originId = action.payload.source.droppableId.slice(6);
         const destinationId = action.payload.destination.droppableId.slice(6);
         const oldArray = Array.from(moveState.roles[originId].habits);
@@ -61,7 +57,6 @@ function reducer(state, action) {
         //get role ids
         const slqRoleIdOrigin = moveState.roles[destinationId].id;
         const slqRoleIdDestination = moveState.roles[originId].id;
-
         const OldArrayParams = oldArray.map((habit: any, i) => {
           return {
             sql: `UPDATE HABITS SET reactOrder=?, roleId=? where id=?`,
@@ -74,9 +69,9 @@ function reducer(state, action) {
             params: [i, slqRoleIdDestination, habit.id],
           };
         });
-        console.log(newArrayParams);
+
         const params = OldArrayParams.concat(newArrayParams);
-        console.log(params);
+
         parallel(params);
 
         return moveState;
@@ -100,15 +95,13 @@ function reducer(state, action) {
     case "add_roles":
       return { ...state, roles: action.payload };
     case "reorder_roles":
-      console.log(state);
       let newState = _.cloneDeep(state);
 
       const newArray = Array.from(newState.roles);
       const [removed] = newArray.splice(action.payload.sourceIndex, 1);
-      console.log(removed);
 
       newArray.splice(action.payload.destIndex, 0, removed);
-      console.log(newArray);
+
       newState.roles = newArray;
       const params = newArray.map((role: any, i) => {
         return {
@@ -134,9 +127,9 @@ export default function MainPage(props) {
   }, []);
   async function getRoles() {
     const x = await read("select * from roles", []);
-    console.log(x);
+
     let y = SortArray(x);
-    console.log(y);
+
     dispatch({ type: "add_roles", payload: y });
   }
 
