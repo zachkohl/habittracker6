@@ -201,7 +201,6 @@ export default function MainPage(props) {
           </Droppable>
         </div>
       </DragDropContext>
-      {JSON.stringify(state, null, 2)}
     </div>
   );
 }

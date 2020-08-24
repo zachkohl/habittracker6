@@ -34,7 +34,7 @@ export default function Habit(props) {
             {...provided.draggableProps}
             {...provided.dragHandleProps}
           >
-            <div style={{ backgroundColor: "green", margin: "10px" }}>
+            <div style={{ backgroundColor: "white", margin: "10px" }}>
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}

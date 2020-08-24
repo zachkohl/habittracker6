@@ -4,7 +4,7 @@ var sqlite3 = require("sqlite3").verbose();
 
 export function write(sql, params) {
   return new Promise((resolve, reject) => {
-    let db = new sqlite3.Database("./database/database.db", (err) => {
+    let db = new sqlite3.Database("./database.db", (err) => {
       if (err) {
         console.error(err.message);
       }
