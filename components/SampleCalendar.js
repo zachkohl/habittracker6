@@ -253,7 +253,6 @@ function Review(props) {
   let daysInMonthLeft = [];
   for (let d = 1; d <= daysInMonth(dateObject); d++) {
     let color = checkDay(d);
-    console.log("what is going on");
     daysInMonthLeft.push(
       <td
         key={d}

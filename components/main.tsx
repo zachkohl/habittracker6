@@ -127,7 +127,7 @@ export default function MainPage(props) {
   }, []);
   async function getRoles() {
     const x = await read("select * from roles", []);
-
+    //This is the problem with add goals. It just replaces state and never reloads the habits.
     let y = SortArray(x);
 
     dispatch({ type: "add_roles", payload: y });

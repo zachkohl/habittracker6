@@ -18,11 +18,13 @@ export default function Habit(props) {
   }
 
   async function deleteHandler() {
-    const x = await write("DELETE FROM habits WHERE id=?", [props.id]);
-    props.dispatch({
-      type: "delete_habit",
-      payload: { habitIndex: props.index, roleIndex: props.roleIndex },
-    });
+    if (window.confirm("Are you sure you want to delete this habit?")) {
+      const x = await write("DELETE FROM habits WHERE id=?", [props.id]);
+      props.dispatch({
+        type: "delete_habit",
+        payload: { habitIndex: props.index, roleIndex: props.roleIndex },
+      });
+    }
   }
 
   return (

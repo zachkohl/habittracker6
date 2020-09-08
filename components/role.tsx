@@ -4,6 +4,7 @@ import write from "../lib/browser/write";
 import Habit from "./habit";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useSelector, useDispatch } from "react-redux";
+import Collapsible from "react-collapsible";
 
 export default function Role(props) {
   const [name, setName] = useState(props.name);
@@ -22,7 +23,7 @@ export default function Role(props) {
 
   useEffect(() => {
     renderHabits();
-  }, []);
+  }, [props.state.roles.length]);
   // const dnd = useSelector((state) => {
   //   state.completed.result.draggableId;
   // });
@@ -34,7 +35,7 @@ export default function Role(props) {
       payload: { habits: x, index: props.index },
     });
 
-    setHabits(x);
+    //   setHabits(x);
   }
   const habitList = useCallback(
     () =>
@@ -53,7 +54,7 @@ export default function Role(props) {
           />
         );
       }),
-    [props.state.roles[props.index]?.habits]
+    [props.state.roles[props.index]?.habits, props.state.roles.length]
   );
 
   async function deleteHandler() {
@@ -91,26 +92,28 @@ export default function Role(props) {
             />
             <button onClick={deleteHandler}>delete</button>
             <input value={habit} onChange={(e) => setHabit(e.target.value)} />
-            <button onClick={createHabit}>Add Habit</button>
-            <Droppable droppableId={`roleId${props.index}`} type="HABIT">
-              {function roleInner(provided, snapshot) {
-                return (
-                  <div
-                    ref={provided.innerRef}
-                    style={{
-                      backgroundColor: snapshot.isDraggingOver
-                        ? "blue"
-                        : "green",
-                    }}
-                    {...provided.droppableProps}
-                  >
-                    {habitList()}
-                    {provided.placeholder}
-                  </div>
-                );
-              }}
-            </Droppable>
-            ;
+            <Collapsible trigger="Habits" open={true}>
+              <button onClick={createHabit}>Add Habit</button>
+              <Droppable droppableId={`roleId${props.index}`} type="HABIT">
+                {function roleInner(provided, snapshot) {
+                  return (
+                    <div
+                      ref={provided.innerRef}
+                      style={{
+                        backgroundColor: snapshot.isDraggingOver
+                          ? "blue"
+                          : "green",
+                      }}
+                      {...provided.droppableProps}
+                    >
+                      {habitList()}
+                      {provided.placeholder}
+                    </div>
+                  );
+                }}
+              </Droppable>
+              ;
+            </Collapsible>
           </div>
         </div>
       )}
