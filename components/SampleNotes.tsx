@@ -32,11 +32,11 @@ export default function SampleNotes(props) {
       "SELECT * FROM samples WHERE habit_id=? AND date=date(?)",
       [props.habitId, props.dateObject.format("YYYY-MM-DD")]
     );
-    console.log(x);
+
     const text = typeof x[0]?.notes === "string" ? x[0]?.notes : "";
 
     const readStatus = typeof x[0]?.status === "string" ? x[0]?.status : "";
-    console.log(readStatus);
+
     setSample(text);
     setStatus(readStatus);
   }

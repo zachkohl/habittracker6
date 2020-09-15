@@ -13,7 +13,6 @@ export default function Role(props) {
   const [habits, setHabits] = useState([]);
 
   function save() {
-    console.log(props.id);
     write("UPDATE ROLES SET name=?, description=? WHERE id=?", [
       name,
       description,
@@ -29,7 +28,10 @@ export default function Role(props) {
   // });
 
   async function renderHabits() {
-    const x = await read("SELECT * from habits where roleId=?", [props.id]);
+    const x = await read(
+      "SELECT * from habits where roleId=? ORDER BY reactOrder ASC",
+      [props.id]
+    );
     props.dispatch({
       type: "add_habits",
       payload: { habits: x, index: props.index },
@@ -67,10 +69,8 @@ export default function Role(props) {
       "INSERT INTO habits(name,roleId) VALUES(?,?)",
       [habit, props.id]
     );
-    console.log(habitObject);
     renderHabits();
   }
-
   return (
     <Draggable draggableId={`roleId${props.id}`} index={props.index}>
       {(provided, snapshot) => (

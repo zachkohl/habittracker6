@@ -194,7 +194,6 @@ class Review extends Component {
   };
 
   showYear = (e, month) => {
-    console.log("show year");
     this.setState({
       showYearTable: !this.state.showYearTable,
       showDateTable: !this.state.showDateTable,

@@ -10,7 +10,6 @@ export default function HomePage(props) {
   }, []);
   async function getHabits() {
     const response = await axios.post("/api/listHabits");
-    console.log(response.data);
     setHabitList(response.data);
   }
   async function clickHandler() {

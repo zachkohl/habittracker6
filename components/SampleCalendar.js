@@ -203,7 +203,7 @@ function Review(props) {
     const y = moment(x).set("date", d);
     setDateObject(y);
     const date = y.format("YYYY-MM-DD");
-    console.log(date);
+
     // const payload = {
     //   roleId: this.props.roleId,
     //   habitId: this.props.habitId,

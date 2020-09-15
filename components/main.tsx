@@ -42,8 +42,12 @@ function reducer(state, action) {
 
         return moveState;
       } else {
+        console.log(action.payload);
+        console.log(state);
         const originId = action.payload.source.droppableId.slice(6);
+        console.log(`originIndex:${originId}`);
         const destinationId = action.payload.destination.droppableId.slice(6);
+        console.log(`destinationIndex:${destinationId}`);
         const oldArray = Array.from(moveState.roles[originId].habits);
         const newArray = Array.from(moveState.roles[destinationId].habits);
         const [removedOldHabit] = oldArray.splice(
@@ -55,8 +59,10 @@ function reducer(state, action) {
         moveState.roles[destinationId].habits = newArray;
 
         //get role ids
-        const slqRoleIdOrigin = moveState.roles[destinationId].id;
-        const slqRoleIdDestination = moveState.roles[originId].id;
+        const slqRoleIdOrigin = moveState.roles[originId].id;
+        console.log(`slqRoleIdOrigin:${slqRoleIdOrigin}`);
+        const slqRoleIdDestination = moveState.roles[destinationId].id;
+        console.log(`slqRoleIdDestination:${slqRoleIdDestination}`);
         const OldArrayParams = oldArray.map((habit: any, i) => {
           return {
             sql: `UPDATE HABITS SET reactOrder=?, roleId=? where id=?`,
@@ -71,7 +77,7 @@ function reducer(state, action) {
         });
 
         const params = OldArrayParams.concat(newArrayParams);
-
+        console.log(params);
         parallel(params);
 
         return moveState;
@@ -126,7 +132,7 @@ export default function MainPage(props) {
     getRoles();
   }, []);
   async function getRoles() {
-    const x = await read("select * from roles", []);
+    const x = await read("select * from roles ORDER BY reactOrder ASC", []);
     //This is the problem with add goals. It just replaces state and never reloads the habits.
     let y = SortArray(x);
 
@@ -179,6 +185,7 @@ export default function MainPage(props) {
       <button onClick={clickHandler}>Add Role</button>
       <DragDropContext
         onDragEnd={(e) => {
+          console.log(e);
           onDragEnd(e, state, dispatch);
         }}
       >

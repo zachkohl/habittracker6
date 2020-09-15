@@ -9,7 +9,6 @@ export default function Habit(props) {
   const [description, setDescription] = useState(props.description || "");
 
   function save() {
-    console.log(props.id);
     write("UPDATE habits SET name=?, description=? WHERE id=?", [
       name,
       description,

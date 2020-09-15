@@ -9,10 +9,8 @@ export function write(sql, params) {
         console.error(err.message);
       }
     });
-    console.log(params);
+
     db.run(sql, params, function (err, rows) {
-      console.log();
-      console.log(rows);
       console.log(err);
       if (err) {
         console.log(err);
@@ -22,7 +20,7 @@ export function write(sql, params) {
         resolve(this.lastID);
       }
     });
-    console.log(db.lastId);
+
     // close the database connection
     db.close();
   });
@@ -35,7 +33,7 @@ export function read(sql, params) {
         console.error(err.message);
       }
     });
-    console.log(params);
+
     db.all(sql, params, (err, rows) => {
       if (err) {
         console.log(err);
@@ -61,7 +59,7 @@ export function parallel(params) {
         console.error(err.message);
       }
     });
-    console.log(params);
+
     db.parallelize(() => {
       for (let i = 0; i < params.length; i++) {
         db.run(params[i].sql, params[i].params, (err, rows) => {
