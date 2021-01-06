@@ -6,7 +6,7 @@
   "author": "zachkohl <zach.kohl@gmail.com>",
   "license": "no license",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "moment": "^2.27.0",
     "next": "^9.5.1",
     "react": "^16.13.1",
